@@ -11,10 +11,8 @@ puts 'Connected'
 puts 'Please enter your SQL query'
 query = gets.chomp
 
-res = Generator.new(client, query).builder
+response = Generator.new(client, query).builder
 
-res.each do |u|
-  puts u
+response.each do |obj|
+  puts obj
 end
-
-exit

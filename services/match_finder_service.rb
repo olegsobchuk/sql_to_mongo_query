@@ -3,12 +3,6 @@ class MatchFinderService
     @query = query
   end
 
-  def match_finder(selector)
-    expression = /(?<=#{selector} )(.*?)(?= select|from|where|skip|limit|$)/i
-    res = @query.match(expression)
-    res[1].strip if res
-  end
-
   def field_names
     fields = match_finder('select')
     fields.gsub(/(\w+\.)?\*,\s+/, '') if fields
@@ -28,5 +22,13 @@ class MatchFinderService
 
   def limit_number
     @limit ||= match_finder('limit')
+  end
+
+  private
+
+  def match_finder(selector)
+    expression = /(?<=#{selector} )(.*?)(?= select|from|where|skip|limit|$)/i
+    result = @query.match(expression)
+    result[1].strip if result
   end
 end
