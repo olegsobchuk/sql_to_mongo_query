@@ -2,7 +2,7 @@ require 'pry'
 
 class MatchFinderService
   CONDITIONS = {
-    '=' => " '$eq' ", '<>' => " '$ne' ", '>' => " '$gt' ", '>=' => " '$gte' ", '<' => " '$lt' ", '<=' => " '$lte' "
+    '=' => ' $eq ', '<>' => ' $ne ', '>' => ' $gt ', '>=' => ' $gte ', '<' => ' $lt ', '<=' => ' $lte '
   }.freeze
   ORDER_KEYWORDS = { 'ASC' => 1, 'DESC' => -1 }
 
