@@ -7,7 +7,10 @@ RSpec.describe Generator do
     double :match_finder_service,
       table_name: table_name,
       limit_number: limit_number,
-      skip_number: skip_number
+      skip_number: skip_number,
+      condition_string: "'conditions' => 'value'",
+      field_names: "'fields' => 'value'",
+      sorted: nil
   end
   let(:table_name) { 'table' }
   let(:limit_number) { 1 }
