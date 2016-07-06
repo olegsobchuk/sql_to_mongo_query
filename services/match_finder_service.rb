@@ -2,8 +2,9 @@ require 'pry'
 
 class MatchFinderService
   CONDITIONS = {
-    '=' => ' $eq ', '<>' => ' some ', '>' => ' $gt ', '>=' => ' $gte ', '<' => ' $lt ', '<=' => ' $lte '
+    '=' => " '$eq' ", '<>' => " '$ne' ", '>' => " '$gt' ", '>=' => " '$gte' ", '<' => " '$lt' ", '<=' => " '$lte' "
   }.freeze
+  ORDER_KEYWORDS = { 'ASC' => 1, 'DESC' => -1 }
 
   def initialize(query)
     @query = query
@@ -11,7 +12,7 @@ class MatchFinderService
 
   def field_names
     fields = match_finder('select')
-    fields.gsub(/(\w+\.?\w+)/, '\1: 1') if fields
+    fields.gsub(/(\w+\.?\w+)/, '\'\1\' => 1') if fields
   end
 
   def table_name
@@ -38,13 +39,16 @@ class MatchFinderService
   end
 
   def sorted
-    false
+    @order ||= match_finder('order by')
+    orders = @order.split(/,\s+/)if @order
+    orders_to_mongo(orders)
+    orders_to_string(orders)
   end
 
   private
 
   def match_finder(selector)
-    expression = /(?<=#{selector} )(.*?)(?= select|from|where|skip|limit|$)/i
+    expression = /(?<=#{selector} )(.*?)(?= select|from|where|skip|limit|order by|$)/i
     result = @query.match(expression)
     result[1].strip if result && !result[1].include?('*')
   end
@@ -61,9 +65,18 @@ class MatchFinderService
   end
 
   def build_mongo_finder(data)
-    "'$and' => [#{data.map { |s| "{ '$or' => [#{s.empty? ? '{}' : s.join(', ')}]}" }.join(', ')}]"
+    "{ '$and' => [#{data.map { |s| "{ '$or' => [#{s.empty? ? '{}' : s.join(', ')}]}" }.join(', ')}] }"
+  end
+
+  def orders_to_mongo(sql_orders)
+    sql_orders.map! do |ord|
+      ord.gsub(/\s*(\w+)\s+(asc|desc)/i) {
+        "'#{Regexp.last_match[1]}' => #{ORDER_KEYWORDS[Regexp.last_match[2]]}"
+      }
+    end
+  end
+
+  def orders_to_string(array_orders)
+    array_orders.join(', ')
   end
 end
-
-# arr = "age < 50 AND name='alex' OR age > 10 or name = 'Oleg'".split(/ *OR */i).map { |s| s.split(/ *AND */i)}
-# str = "{ $and: [#{ arr.map { |s| "{ $or : [#{s.empty? ? "{}" : s.join(", ")}]}"}.join(", ")}]"
