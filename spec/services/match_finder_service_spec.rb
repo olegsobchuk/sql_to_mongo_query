@@ -5,7 +5,7 @@ RSpec.describe MatchFinderService do
   let(:sql) { 'select field_name from table skip 1 limit 2' }
 
   describe '#field_names' do
-    it { expect(service.field_names).to eq('field_name') }
+    it { expect(service.field_names).to eq('field_name: 1') }
   end
 
   describe '#table_name' do
