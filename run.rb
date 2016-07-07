@@ -14,6 +14,8 @@ query = gets.chomp
 
 response = Generator.new(client, query).builder
 
+puts 'RESULT'
+
 response.each do |obj|
   puts obj
 end
