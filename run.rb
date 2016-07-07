@@ -1,6 +1,6 @@
-Dir["#{File.dirname(__FILE__)}/services/*.rb"].each { |file| require_relative file }
+# Dir["#{File.dirname(__FILE__)}/services/*.rb"].each { |file| require_relative file }
+require_relative 'services/generator'
 require 'mongo'
-require 'pry'
 
 puts 'Please enter your DB name'
 db_name = gets.chomp

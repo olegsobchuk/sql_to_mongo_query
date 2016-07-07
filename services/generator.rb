@@ -1,5 +1,4 @@
-require 'pry'
-require_relative 'match_finder_service'
+require_relative 'sql_parser'
 
 class Generator
   attr_reader :client, :sql, :finders
@@ -7,7 +6,7 @@ class Generator
   def initialize(mongo_client, sql)
     @client = mongo_client
     @sql = sql
-    @finders = MatchFinderService.new(sql)
+    @finders = SqlParser.new(sql)
   end
 
   def builder

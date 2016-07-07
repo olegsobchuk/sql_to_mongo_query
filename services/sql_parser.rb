@@ -1,10 +1,8 @@
-require 'pry'
-
-class MatchFinderService
+class SqlParser
   CONDITIONS = {
     '=' => ' $eq ', '<>' => ' $ne ', '>' => ' $gt ', '>=' => ' $gte ', '<' => ' $lt ', '<=' => ' $lte '
   }.freeze
-  ORDER_KEYWORDS = { 'ASC' => 1, 'DESC' => -1 }
+  ORDER_KEYWORDS = { 'asc' => 1, 'desc' => -1 }.freeze
 
   def initialize(query)
     @query = query
@@ -40,9 +38,11 @@ class MatchFinderService
 
   def sorted
     @order ||= match_finder('order by')
-    orders = @order.split(/,\s+/)if @order
-    orders_to_mongo(orders)
-    orders_to_string(orders)
+    if @order
+      orders = @order.split(/,\s+/)if @order
+      orders_to_mongo(orders)
+      orders_to_string(orders)
+    end
   end
 
   private
@@ -71,7 +71,7 @@ class MatchFinderService
   def orders_to_mongo(sql_orders)
     sql_orders.map! do |ord|
       ord.gsub(/\s*(\w+)\s+(asc|desc)/i) {
-        "'#{Regexp.last_match[1]}' => #{ORDER_KEYWORDS[Regexp.last_match[2]]}"
+        "'#{Regexp.last_match[1]}' => #{ORDER_KEYWORDS[Regexp.last_match[2].downcase]}"
       }
     end
   end
